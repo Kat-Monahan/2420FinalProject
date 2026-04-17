@@ -1,0 +1,20 @@
+# Lost Hiker Map Config
+
+# Player starting row, col
+0 0
+
+# Blocked cells (row, col) - one per line
+4 9
+4 8
+5 8
+5 7
+5 5
+4 5
+4 4
+4 3
+4 2
+5 2
+6 2
+7 2
+7 1
+7 0
