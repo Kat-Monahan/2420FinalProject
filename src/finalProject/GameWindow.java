@@ -2,6 +2,8 @@ package finalProject;
 
 import java.awt.CardLayout;
 import java.awt.EventQueue;
+import java.io.IOException;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -19,6 +21,7 @@ public class GameWindow extends JFrame {
 	private ControlPanel controlPanel;
 	private CardLayout cardLayout;
 	private JPanel cardPanel;
+	private Game game;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -34,10 +37,17 @@ public class GameWindow extends JFrame {
 	}
 
 	/**
-	 * Sets up the window with an opening screen and the game view.
-	 * The Play button goes to the game play 
+	 * Sets up the window with an opening screen and the game view. The Play button
+	 * goes to the game play
 	 */
 	public GameWindow() {
+
+		try {
+			game = new Game("src/Resources/map.txt");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1200, 800);
 		setLocationRelativeTo(null);
@@ -46,15 +56,19 @@ public class GameWindow extends JFrame {
 		cardPanel = new JPanel(cardLayout);
 
 		OpeningScreen openingScreen = new OpeningScreen();
+		WinScreen winScreen = new WinScreen();
+		LoseScreen loseScreen = new LoseScreen();
 
 		JPanel gameView = new JPanel(new java.awt.BorderLayout(10, 10));
-		controlPanel = new ControlPanel();
-		gamePanel = new GamePanel(10, 10);
+		controlPanel = new ControlPanel(game);
+		gamePanel = new GamePanel(game);
 		gameView.add(controlPanel, java.awt.BorderLayout.WEST);
 		gameView.add(gamePanel, java.awt.BorderLayout.CENTER);
 
 		cardPanel.add(openingScreen, "OPENING");
 		cardPanel.add(gameView, "GAME");
+		cardPanel.add(winScreen, "WIN");
+		cardPanel.add(loseScreen, "LOSE");
 
 		add(cardPanel);
 
@@ -62,6 +76,19 @@ public class GameWindow extends JFrame {
 			gamePanel.paintMap();
 			cardLayout.show(cardPanel, "GAME");
 		});
+
+		winScreen.getPlayButton().addActionListener(e -> {
+			gamePanel.paintMap();
+			cardLayout.show(cardPanel, "OPENING");
+			
+		});
+		
+		loseScreen.getPlayButton().addActionListener(e -> {
+			gamePanel.paintMap();
+			cardLayout.show(cardPanel, "OPENING");
+		});
+
+
 	}
 
 	public GamePanel getGamePanel() {
@@ -70,5 +97,9 @@ public class GameWindow extends JFrame {
 
 	public ControlPanel getControlPanel() {
 		return controlPanel;
+	}
+
+	public void showScreen(String card) {
+		cardLayout.show(cardPanel, card);
 	}
 }
